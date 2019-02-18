@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PlateScrape - Quit Wasting, Start Saving</title>
+    <link href="https://uploads-ssl.webflow.com/589cf8f915395b8d57bcab56/5af64cd548189603c7b883de_Favicon.png" rel="shortcut icon" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600,700|Roboto:400,700" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap-reboot.min.css" integrity="sha256-dARYuC3pd0wa/7R4Hkt/sR2zfLHCgbnVAQ2sPwhNe0A=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.css" integrity="sha256-MSeNrYhmfZbyTUAhVy7w153T7LFxQfCf/DBDjtbvZdg=" crossorigin="anonymous" />
+    <style type="text/css">
+        /* Typography */
+        body {
+            font-family: 'Roboto', sans-serif;
+            min-width: 500px;
+
+            color: #262626;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 6em;
+            line-height: 1.2em;
+            color: #3997d3;
+
+            margin-bottom: 1em;
+        }
+
+        article {
+            font-size: 3em;
+
+        }
+
+        figcaption, footer {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+
+        figcaption {
+            color: #3997d3;
+            text-transform: uppercase;
+        }
+
+        footer {
+            color: white;
+            background-color: #3997d3;
+            font-size: 1.5em;
+            padding: 1em;
+        }
+
+        /* Layout */
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            display: flex;
+            flex-direction: row;
+            flex: 1;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        article {
+            padding: 0 1em;
+        }
+
+        article p {
+            margin-bottom: 1em;
+        }
+
+        aside {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        figure {
+            position: relative;
+        }
+
+        figcaption {
+            font-size: 3em;
+            text-align: center;
+        }
+
+        #elapsed_time_display, #water_bottle, #total_gallons_used_display {
+            margin: 0;
+
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+
+        #total_gallons_used_display {
+            position: absolute;
+            margin-top: 10em;
+        }
+
+        footer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (max-width: 1667px) {
+            h1 {
+                margin-top: 1em;
+            }
+
+            section, aside {
+                margin-bottom: 6em;
+            }
+        }
+
+        @media (min-width: 1668px) {
+            section {
+                flex-basis: 70%;
+            }
+
+            aside {
+                flex-basis: 30%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section>
+            <h1>
+                Quit Wasting,<br>
+                Start Saving
+            </h1>
+            <article>
+                <p>With every passing minute, <strong>this</strong> spray nozzle wastes <strong>1.5 gallons</strong> of drinkable tap water.</p>
+                <p>The PlateScrape has been lab tested to <strong>save up to 93%</strong> of this wasted water!</p>
+            </article>
+        </section>
+        <aside>
+            <figure>
+                <div id="elapsed_time_display"></div>
+            </figure>
+            <figure>
+                <div id="total_gallons_used_display"></div>
+                <div id="water_bottle">
+                    <img src="https://uploads-ssl.webflow.com/5a8f479ac12563000148c5a0/5af37c521f61902496e0e6bc_water.svg" width="500px" />
+                </div>
+                <figcaption>Gallons</figcaption>
+            </figure>
+        </aside>
+    </main>
+    <footer>
+        www.platescrape.com
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.js" integrity="sha256-zZFgUYWREnXJDw3PMQASiGmzHVL+VNfcA5eaXhipwag=" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        const SECONDS_FOR_ONE_GALLON_USE = 40;
+
+        // Attempt to grab the starting seconds from the URL. Fall back to 0 if param doesn't exist
+        const startingSecondsString = new URLSearchParams(document.location.search).get("startingseconds");
+        const startingSeconds = parseInt(startingSecondsString) || 0;
+
+        var timerDisplayElement = document.querySelector("#elapsed_time_display");
+        var gallonsDisplayElement = document.querySelector("#total_gallons_used_display");
+
+        var counter = new FlipClock($(gallonsDisplayElement), startingSeconds / 45, {
+            clockFace: 'Counter',
+            minimumDigits: 5
+        });
+
+        var clock = new FlipClock($(timerDisplayElement), startingSeconds);
+
+        setInterval(function() {
+            const currentTime = clock.getTime().time - 1;
+            if (currentTime % SECONDS_FOR_ONE_GALLON_USE === 0) {
+                counter.increment();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
